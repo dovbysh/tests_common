@@ -15,6 +15,8 @@ const (
 	PgMinIdleConns = 10
 )
 
+type ClickHouseAddresses map[string]string
+
 func PostgreSQLContainer(wg *sync.WaitGroup) (*pg.Options, func(), int, *Container) {
 	wd, _ := os.Getwd()
 	testdir := path.Base(wd)
@@ -56,23 +58,24 @@ func PostgreSQLContainer(wg *sync.WaitGroup) (*pg.Options, func(), int, *Contain
 	return o, postgresContainer.Close, port, &postgresContainer
 }
 
-func ClickhouseContainer(wg *sync.WaitGroup) (string, func()) {
+func ClickhouseContainer(wg *sync.WaitGroup) (ClickHouseAddresses, func()) {
 	wd, _ := os.Getwd()
 	testdir := path.Base(wd)
-	olapAddr, _, _ := GetFreeLocalAddr()
+	olapAddrHttp, _, _ := GetFreeLocalAddr()
+	olapAddrTcp, _, _ := GetFreeLocalAddr()
 	olapContainer := Container{
 		Address:      "docker.io/yandex/clickhouse-server",
 		Image:        "yandex/clickhouse-server",
 		Name:         fmt.Sprintf("%s-clickhouse", testdir),
 		Environments: []string{},
-		Ports:        map[string]string{olapAddr: "8123/tcp"},
+		Ports:        map[string]string{olapAddrHttp: "8123/tcp", olapAddrTcp: "9000/tcp"},
 	}
 	olapContainer.Run()
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
 		for {
-			r, _, _ := gorequest.New().Get(fmt.Sprintf("http://%s/?debug=1", olapAddr)).End()
+			r, _, _ := gorequest.New().Get(fmt.Sprintf("http://%s/?debug=1", olapAddrHttp)).End()
 			if r == nil {
 				time.Sleep(time.Microsecond)
 				continue
@@ -80,5 +83,9 @@ func ClickhouseContainer(wg *sync.WaitGroup) (string, func()) {
 			break
 		}
 	}()
-	return olapAddr, olapContainer.Close
+
+	return ClickHouseAddresses{
+		"http": olapAddrHttp,
+		"tcp":  olapAddrTcp,
+	}, olapContainer.Close
 }
