@@ -21,6 +21,7 @@ type Container struct {
 	Environments []string
 	Ports        map[string]string
 	Mounts       map[string]string
+	Cmd          []string
 	id           string
 	Inspection   *types.ContainerJSON
 }
@@ -83,6 +84,7 @@ imagesLoop:
 	cntr, err := cli.ContainerCreate(ctx, &container.Config{
 		Env:   c.Environments,
 		Image: c.Image,
+		Cmd:   c.Cmd,
 	}, &container.HostConfig{
 		PortBindings: pb,
 		Mounts:       mounts,
