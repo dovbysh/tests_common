@@ -13,6 +13,7 @@ require (
 	github.com/go-pg/pg/v9 v9.1.6
 	github.com/go-pg/urlstruct v0.5.1 // indirect
 	github.com/gopherjs/gopherjs v0.0.0-20200217142428-fce0ec30dd00 // indirect
+	github.com/jlaffaye/ftp v0.0.0-20201021201046-0de5c29d4555
 	github.com/kr/text v0.2.0 // indirect
 	github.com/nats-io/jwt v1.0.1 // indirect
 	github.com/nats-io/nats-streaming-server v0.18.0 // indirect
