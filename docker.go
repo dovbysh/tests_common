@@ -88,7 +88,7 @@ imagesLoop:
 	}, &container.HostConfig{
 		PortBindings: pb,
 		Mounts:       mounts,
-	}, nil, c.Name)
+	}, nil, nil, c.Name)
 	if err != nil {
 		panic(err)
 	}

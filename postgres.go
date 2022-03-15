@@ -2,11 +2,12 @@ package tests_common
 
 import (
 	"fmt"
-	"github.com/go-pg/pg/v9"
 	"os"
 	"path"
 	"sync"
 	"time"
+
+	"github.com/go-pg/pg/v9"
 )
 
 const (
