@@ -1,4 +1,4 @@
-module github.com/dovbysh/tests_common/v3
+module github.com/dovbysh/tests_common
 
 go 1.14
 
